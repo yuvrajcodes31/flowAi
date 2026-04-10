@@ -2,7 +2,7 @@ import { GoogleGenAI } from "@google/genai";
 import sql from "../configs/db.js";
 import { clerkClient } from "@clerk/express";
 import fs from 'fs';
-import pdfParse from 'pdf-parse/lib/pdf-parse.js';
+import pdfParse from 'pdf-parse'
 import axios from 'axios';
 import { v2 as cloudinary } from 'cloudinary'
 import { buffer } from "node:stream/consumers";
@@ -208,45 +208,45 @@ export const removeImageObject = async (req, res) => {
         res.json({ success: false, message: error.message })
     }
 }
-export const resumeReview = async (req, res) => {
-    try {
-        const { userId } = req.auth();
-        const resume = req.file;
-        const plan = req.plan;
+// export const resumeReview = async (req, res) => {
+//     try {
+//         const { userId } = req.auth();
+//         const resume = req.file;
+//         const plan = req.plan;
 
 
-        if (plan !== 'premium') {
-            return res.json({ success: false, message: "This feature is only available for premium subscriptions." })
-        }
+//         if (plan !== 'premium') {
+//             return res.json({ success: false, message: "This feature is only available for premium subscriptions." })
+//         }
 
-        if(resume.size > 5 * 1024 * 1024){
-            return res.json({success: false, message: "resume file size exceeds allowed size (5MB)."})
-        }
+//         if(resume.size > 5 * 1024 * 1024){
+//             return res.json({success: false, message: "resume file size exceeds allowed size (5MB)."})
+//         }
 
-        const dataBuffer = fs.readFileSync(resume.path)
-        const pdfData = await pdfParse(dataBuffer);
+//         const dataBuffer = fs.readFileSync(resume.path)
+//         const pdfData = await pdfParse(dataBuffer);
 
-        const prompt = `Review the following resume and provide constructive feedback on its strengths, weakness, and area for improvement. Resume Content: ${pdfData.text}`
+//         const prompt = `Review the following resume and provide constructive feedback on its strengths, weakness, and area for improvement. Resume Content: ${pdfData.text}`
 
-        const response = await ai.models.generateContent({
-            model: "gemini-3.1-flash-lite-preview",
-            contents: prompt,
-            config: {
-                temperature: 0.7
-            }
-        });
-        const content = response.text
-
-
-        await sql` INSERT INTO creations (user_id, prompt, content, type)
-        VALUES (${userId}, 'Review the uploaded resume', ${content}, 'resume-review')`;
+//         const response = await ai.models.generateContent({
+//             model: "gemini-3.1-flash-lite-preview",
+//             contents: prompt,
+//             config: {
+//                 temperature: 0.7
+//             }
+//         });
+//         const content = response.text
 
 
-        res.json({ success: true, content })
+//         await sql` INSERT INTO creations (user_id, prompt, content, type)
+//         VALUES (${userId}, 'Review the uploaded resume', ${content}, 'resume-review')`;
 
-    } catch (error) {
-        console.log(error.message)
-        res.json({ success: false, message: error.message })
-    }
-}
+
+//         res.json({ success: true, content })
+
+//     } catch (error) {
+//         console.log(error.message)
+//         res.json({ success: false, message: error.message })
+//     }
+// }
 
