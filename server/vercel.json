@@ -1,20 +1,11 @@
 {
-    "version": 2,
-    "builds": [
-        {
-            "src": "server.js",
-            "use": "@vercel/node",
-            "config": {
-                "includeFiles": [
-                    "dist/**"
-                ]
-            }
-        }
-    ],
-    "routes": [
-        {
-            "src": "/(.*)",
-            "dest": "server.js"
-        }
-    ]
+  "rewrites": [{ "source": "/(.*)", "destination": "/server.js" }],
+  "functions": {
+    "server.js": {
+      "includeFiles": "dist/**"
+    }
+  },
+  "engines": {
+    "node": "20.x"
+  }
 }
