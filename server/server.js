@@ -8,16 +8,22 @@ import userRouter from './routes/userRoutes.js';
 
 const app = express()
 
-await connectCloudinary();
+
 
 app.use(cors())
 app.use(express.json())
 app.use(clerkMiddleware())
 
-app.get('/check-live', (req, res)=>res.send('Server is live!'))
 
 app.use(requireAuth())
-
+app.use(async (req, res, next) => {
+    if (!isCloudinaryConnected) {
+        await connectCloudinary();
+        isCloudinaryConnected = true;
+    }
+    next();
+});
+app.use("/api/status", (req, res) => res.send("Server is live"))
 app.use('/api/ai', aiRouter)
 app.use('/api/user', userRouter)
 
