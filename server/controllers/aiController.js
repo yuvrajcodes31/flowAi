@@ -2,7 +2,7 @@ import { GoogleGenAI } from "@google/genai";
 import sql from "../configs/db.js";
 import { clerkClient } from "@clerk/express";
 import fs from 'fs';
-import { PDFParse } from "pdf-parse";
+import pdfParse from 'pdf-parse/lib/pdf-parse.js';
 import axios from 'axios';
 import { v2 as cloudinary } from 'cloudinary'
 import { buffer } from "node:stream/consumers";
@@ -224,8 +224,7 @@ export const resumeReview = async (req, res) => {
         }
 
         const dataBuffer = fs.readFileSync(resume.path)
-        const parser = new PDFParse({data: dataBuffer})
-        const pdfData = await parser.getText();
+        const pdfData = await pdfParse(dataBuffer);
 
         const prompt = `Review the following resume and provide constructive feedback on its strengths, weakness, and area for improvement. Resume Content: ${pdfData.text}`
 
