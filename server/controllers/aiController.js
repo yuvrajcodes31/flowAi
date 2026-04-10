@@ -2,7 +2,7 @@ import { GoogleGenAI } from "@google/genai";
 import sql from "../configs/db.js";
 import { clerkClient } from "@clerk/express";
 import fs from 'fs';
-import pdfParse from 'pdf-parse'
+
 import axios from 'axios';
 import { v2 as cloudinary } from 'cloudinary'
 import { buffer } from "node:stream/consumers";
